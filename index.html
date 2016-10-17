@@ -1,119 +1,86 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <title>Renting Tool for Munich</title>
-    <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
-    <style>
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      #map {
-        height: 100%;
-      }
-      #floating-panel {
-        position: absolute;
-        top: 10px;
-        left: 25%;
-        z-index: 5;
-        background-color: #fff;
-        padding: 5px;
-        border: 1px solid #999;
-        text-align: center;
-        font-family: 'Roboto','sans-serif';
-        line-height: 30px;
-        padding-left: 10px;
-      }
-    </style>
+
+    <!-- custome style -->
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <!-- import bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
   </head>
   <body>
+
+      <!-- panel container -->
       <div id="floating-panel">
-        <input id="csv" type="file">
+
+        <div class="university">
+          <label>Choose your university: </label>
+          <select id="university" name="university" class="form-control">
+            <option value="Geschwister-Scholl-Platz-1">LMU Main Campus</option>
+            <option value="Arcisstraße-21">TUM Main Campus</option>
+            <option value="Boltzmannstraße-3">TUM Garching Campus</option>
+          </select>
+        </div>
+
+        <div class="room-num">
+          <label>Choose your expect number of room: </label>
+          <select id="room-num" name="room-num" class="form-control">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value=">4">>4</option>
+          </select>
+        </div>
+
+        <div class="time">
+          <label>Choose your expect arrive time (less than): </label>
+          <select id="time" name="time" class="form-control">
+            <option value="15">15 min</option>
+            <option value="30">30 min</option>
+            <option value="45">45 min</option>
+            <option value="60">60 min</option>
+          </select>
+        </div>
+
+        <div class="csv form-group">
+          <label>Upload housing file(.csv):</label>
+          <input id="csv" type="file" name="csv" class="filestyle">
+        </div>
+
+        <div class="submit">
+          <button type="submit" class="btn btn-primary btn-block">Start Renting!</button>
+        </div>
+
       </div>
+
+      <div id="infos">
+        <small>Copyright &copy; 2016 <a href="http://changkun.de/munich/">changkun.de</a>. All rights reserved. Infos provided by <a href="http://www.studentenwerk-muenchen.de"><strong>Studentenwerk</strong></a>.
+        </small>
+      </div>
+
+      <!-- map container -->
       <div id="map"></div>
+
+
+
     </div>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    <script src="jquery-csv.min.js"></script>
-    <script>
-      $(document).ready(function() {
-        $('#csv').bind('change', handleFileSelect);
-      })
 
-      var map;
-      function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 48.1351, lng: 11.5820},
-          zoom: 11
-        });
-      }
+    <!-- import jqeury -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 
-      function handleFileSelect(evt) {
-        var geocoder = new google.maps.Geocoder();
+    <!-- import jquery-csv -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.71/jquery.csv-0.71.min.js"></script>
 
-        var files = evt.target.files;
-        var file = files[0];
-        var reader = new FileReader();
-        reader.readAsText(file);
-        reader.onload = function(event) {
-          var csv = event.target.result;
-          var data = $.csv.toArrays(csv);
-          for(var row in data) {
-            if (data[row][5] != '2') continue;
-            var i = 0;
-            var infos = {
-              'address': data[row][1]+' munich',
-              'rent': data[row][8]
-            };
-            geocodeAddress(infos, geocoder, map, i);
-            i += 200;
-          }
-        }
-      }
-
-      function geocodeAddress(infos, geocoder, resultsMap, timeout) {
-        geocoder.geocode({'address': infos['address']}, function(results, status) {
-          if (status === google.maps.GeocoderStatus.OK) {
-            resultsMap.setCenter(results[0].geometry.location);
-
-            var infowindow = new google.maps.InfoWindow({
-              content: '<div id="content"><h4>'+infos['rent']+'</h4></div>'
-            });
-
-            var markders = [];
-
-            var marker = new google.maps.Marker({
-              map: resultsMap,
-              position: results[0].geometry.location,
-              title: infos['address']
-            });
-            window.setTimeout(function() {
-              markers.push(markder);
-            }, timeout);
-
-            marker.addListener('click', function() {
-              infowindow.open(map, marker);
-            })
-          } else {
-            alert('Geocode was not successful for the following reason: ' + status);
-          }
-        });
-      }
-
-      function addMarkerWithTimeout(position, timeout) {
-        window.setTimeout(function() {
-          markers.push(new google.maps.Marker({
-            position: position,
-            map: map,
-            animation: google.maps.Animation.DROP
-          }));
-        }, timeout);
-      }
-
-    </script>
+    <!-- import google map api -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4xZYlUQYST7Rw9oe-G5-gFP1u-6sUP0I&callback=initMap"
         async defer></script>
+
+    <!-- core operation for visualization-->
+    <script src="map.js"></script>
   </body>
 </html>
