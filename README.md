@@ -14,7 +14,7 @@ Thus, a convenient renting tool becomes a necessity.
 
 ## Demo
 
-![](imgs/overview.png)
+![](imgs/overview2.png)
 
 ## Usage
 
