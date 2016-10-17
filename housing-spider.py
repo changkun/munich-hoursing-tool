@@ -2,12 +2,16 @@
 from bs4 import BeautifulSoup
 import requests
 import csv
+import time
+import geocoder
 
 # studentenwerk rent url
 base_url = "http://www.studentenwerk-muenchen.de"
 offers_uri = "/wohnen/privatzimmervermittlung/angebote/"
 
 illustrate_de = [
+    'Länge',
+    'Breite',
     'Stadtteil',
     'Straße',
     'Art des Zimmers',
@@ -29,6 +33,8 @@ illustrate_de = [
     'url'
 ]
 illustrate_en = [
+    'longitude',
+    'latitude',
     'District',
     'Road',
     'Type of room',
@@ -50,6 +56,8 @@ illustrate_en = [
     'Url'
 ]
 illustrate_cn = [
+    '经度',
+    '纬度',
     '区',
     '街道',
     '房屋类型',
@@ -104,22 +112,26 @@ for i, row in enumerate(rows):
         'class': '[ o-list-ui o-list-ui--flush ]'
     })
 
+
     infos = []
     for li in uls.find_all('li', {'class': 'o-media'}):
         info = li.find('span', {'class': 'o-media__body'}).string
         if info is not None:
             info = unicode(info)
-        else:
+        else: # TODO: here should be the size of room
             info = 'Nothing'
         info = info.replace('\n', ' ').replace('\t', '').replace('  ', '').strip(' ')
         infos.append(info.encode('utf-8'))
 
-    # print 'offer:', offer
-    print 'infos:', infos
+    # server side geocoding
+    pos = geocoder.google(infos[1]+' munich').latlng
+    print pos
 
-    offers['muenchen'].append(infos+uris)
+    offers['muenchen'].append(pos+infos+uris)
 
-with open("rent.csv", "wb") as csv_file:
+(year, mon, day, hour, _, _, _, _, _) = time.localtime()
+filename = str(year)+'-'+str(mon)+'-'+str(day)+'-'+str(hour)+'.csv'
+with open(filename, 'wb') as csv_file:
     csv_writer = csv.writer(csv_file, delimiter=',')
     csv_writer.writerow(illustrate_cn)
     csv_writer.writerows(offers['muenchen'])
