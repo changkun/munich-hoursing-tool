@@ -30,9 +30,17 @@ Then you should get a `.csv` file in this folder, which contains all the housing
 
 ### `index.html`
 
+> **IMPORTANT:** Considering security reason, you cannot straightly use this file due to it contains my private key of Google Map, you need to [**apply**](https://developers.google.com/maps/documentation/javascript/) an **Google Map JavaScript API KEY** on your own, and put it in the following content, which is in the `index.html`:
+
+> ```html
+> <script src="https://maps.googleapis.com/maps/api/js?> key=YOUR_API_KEY&callback=initMap" async defer></script>
+> ``` 
+
 Once you have the `rent.csv` file, you should be able to use `index.html` to visualize all the informations in a map that allows you to check all the housing infos quickly and intuitional.
 
 For usage, just simply choose the `.csv` file in the web page, then you will get all you need.
+
+
 
 
 ## License
